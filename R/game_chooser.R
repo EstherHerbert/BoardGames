@@ -18,7 +18,7 @@ game_chooser <- function(...) {
     # Sidebar with a slider input for number of bins
     sidebarLayout(
       sidebarPanel(
-        fileInput("collection", "Upload boardgame collection"),
+        textInput("username", "Your BGG username"),
         numericInput("players", "Number of Players", min = 1, max = 20,
                      value = 2),
         shiny::checkboxInput("time", label = "Is time limited?"),
@@ -40,14 +40,14 @@ game_chooser <- function(...) {
   server <- function(input, output, session) {
 
     games <- reactive({
-      req(input$collection)
+      req(input$username)
 
-      file <- input$collection$datapath
+      df <- get_collection(input$username)
 
-      df <- utils::read.csv(file)
+      df <- dplyr::filter(df, own == T)
 
-      df[c("objectname", "avgweight", "minplayers", "maxplayers",
-           "minplaytime", "maxplaytime", "bggrecagerange")]
+      dplyr::select(df, -own, -objectid)
+
     })
 
     output$timeInput <- renderUI({
@@ -76,7 +76,7 @@ game_chooser <- function(...) {
 
       if(input$young) {
         req(input$age)
-        df <- dplyr::filter(df, as.numeric(gsub("\\D", "", bggrecagerange)) <=
+        df <- dplyr::filter(df, as.numeric(gsub("\\D", "", minage)) <=
                               input$age)
       }
 
@@ -93,7 +93,7 @@ game_chooser <- function(...) {
     })
 
     output$random_game <- renderText({
-      glue::glue_data(random_game(), "Random game: {objectname}")
+      glue::glue_data(random_game(), "Random game: {name}")
     })
 
   }
