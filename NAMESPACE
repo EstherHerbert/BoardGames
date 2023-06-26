@@ -2,3 +2,4 @@
 
 export(game_chooser)
 import(shiny)
+importFrom(magrittr,"%>%")

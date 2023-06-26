@@ -16,5 +16,7 @@ LazyData: true
 Imports: 
     bggAnalytics,
     dplyr,
+    DT,
     glue,
+    magrittr,
     pkgload

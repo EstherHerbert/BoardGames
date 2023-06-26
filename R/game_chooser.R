@@ -31,7 +31,7 @@ game_chooser <- function(...) {
 
       # Show a plot of the generated distribution
       mainPanel(
-        tableOutput("games_filtered")
+        DT::dataTableOutput("games_filtered")
       )
     )
   )
@@ -84,8 +84,10 @@ game_chooser <- function(...) {
 
     })
 
-    output$games_filtered <- renderTable({
-      dplyr::rename(games_filtered(), games_labels)
+    output$games_filtered <- DT::renderDataTable({
+      dplyr::rename(games_filtered(), games_labels) %>%
+        DT::datatable() %>%
+        DT::formatRound(columns = 2:6, digits = 0)
     })
 
     random_game <- eventReactive(input$rand, {
