@@ -28,7 +28,8 @@ game_chooser <- function(...) {
         uiOutput("ageInput"),
         actionButton("rand", "Random Game?", icon = icon("shuffle")),
         span(textOutput("random_game"), style = "font-size:22px"),
-        textOutput("random_game_details")
+        textOutput("random_game_details"),
+        uiOutput("random_game_image")
       ),
 
       # Show a plot of the generated distribution
@@ -101,10 +102,14 @@ game_chooser <- function(...) {
     })
 
     output$random_game_details <- renderText({
-      df <- dplyr::select(random_game(), minplayers:minage) %>%
+      df <- dplyr::select(random_game(), minplayers:minage, -image) %>%
         dplyr::rename(any_of(games_labels))
 
       paste0(names(df), ": ", df[1,], collapse = "; ")
+    })
+
+    output$random_game_image <- renderUI({
+      tags$img(src = random_game()$image, width = 300)
     })
 
   }

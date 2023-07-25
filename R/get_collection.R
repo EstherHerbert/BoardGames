@@ -3,7 +3,7 @@ get_collection <- function(username) {
   collection <- bggAnalytics::bggCollection$new(username = username)
 
   collection$expand(c("own", "name", "minplayers", "maxplayers", "minplaytime",
-                      "maxplaytime"))
+                      "maxplaytime", "image"))
 
   games <- bggAnalytics::bggGames$new(ids = collection$ids)
   games$expand(c("minage"))
