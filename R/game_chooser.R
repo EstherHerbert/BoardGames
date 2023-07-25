@@ -1,9 +1,10 @@
 #' Shiny app to help choose a game to play
 #'
-#' This app uses a board game collection (as downloaded from
-#'   [boardgamegeek.com](https://boardgamegeek.com) to help a user choose a game to play based on the
-#'   number of players, the time available, and/or the age of the youngest
-#'   player. There's also a random game selector if you're really indecisive!
+#' This app uses a board game collection (as accessed from
+#'   [boardgamegeek.com](https://boardgamegeek.com) to help a user choose a game
+#'   to play based on the number of players, the time available, and/or the age
+#'   of the youngest player. There's also a random game selector if you're
+#'   really indecisive!
 #'
 #' @param ... options passed to [shiny::shinyApp()]
 #'
@@ -26,7 +27,8 @@ game_chooser <- function(...) {
         checkboxInput("young", label = "Are there young players?"),
         uiOutput("ageInput"),
         actionButton("rand", "Random Game?", icon = icon("shuffle")),
-        span(textOutput("random_game"), style = "font-size:22px")
+        span(textOutput("random_game"), style = "font-size:22px"),
+        textOutput("random_game_details")
       ),
 
       # Show a plot of the generated distribution
@@ -96,6 +98,13 @@ game_chooser <- function(...) {
 
     output$random_game <- renderText({
       glue::glue_data(random_game(), "Random game: {name}")
+    })
+
+    output$random_game_details <- renderText({
+      df <- dplyr::select(random_game(), minplayers:minage) %>%
+        dplyr::rename(any_of(games_labels))
+
+      paste0(names(df), ": ", df[1,], collapse = "; ")
     })
 
   }
