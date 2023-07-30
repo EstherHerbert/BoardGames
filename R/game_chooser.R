@@ -89,7 +89,7 @@ game_chooser <- function(...) {
 
     output$games_filtered <- DT::renderDataTable({
       dplyr::rename(games_filtered(), games_labels) %>%
-        DT::datatable() %>%
+        DT::datatable(options = list(paging = FALSE)) %>%
         DT::formatRound(columns = 2:6, digits = 0)
     })
 
