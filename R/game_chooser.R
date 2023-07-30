@@ -19,7 +19,11 @@ game_chooser <- function(...) {
     # Sidebar with a slider input for number of bins
     sidebarLayout(
       sidebarPanel(
-        textInput("username", "Your BGG username"),
+        fluidRow(
+          column(width = 9, textInput("username", "Your BGG username")),
+          column(width = 3, div(style = "margin-top: 25px",
+                                actionButton("search", "Search")))
+        ),
         numericInput("players", "Number of Players", min = 1, max = 20,
                      value = 2),
         shiny::checkboxInput("time", label = "Is time limited?"),
@@ -42,8 +46,7 @@ game_chooser <- function(...) {
   # Define server logic required to draw a histogram
   server <- function(input, output, session) {
 
-    games <- reactive({
-      req(input$username)
+    games <- eventReactive(input$search, {
 
       df <- get_collection(input$username)
 
