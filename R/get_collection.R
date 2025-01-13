@@ -5,7 +5,7 @@ get_collection <- function(username) {
   collection$expand(c("own", "name", "minplayers", "maxplayers", "minplaytime",
                       "maxplaytime", "image"))
 
-  games <- bggAnalytics::bggGames$new(ids = collection$ids)
+  games <- bggAnalytics::bggGames$new(ids = collection$ids, chunk_size = 20)
   games$expand(c("minage"))
 
   collection <- bggAnalytics::bgg_merge(collection, games)
