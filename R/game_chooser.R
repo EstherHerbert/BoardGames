@@ -91,9 +91,14 @@ game_chooser <- function(...) {
     })
 
     output$games_filtered <- DT::renderDataTable({
-      dplyr::rename(games_filtered(), games_labels) %>%
-        DT::datatable(options = list(paging = FALSE)) %>%
-        DT::formatRound(columns = 2:6, digits = 0)
+      dplyr::mutate(
+        games_filtered(),
+        image = paste0("<img src=\"", image, "\" height=\"30\">")
+      ) %>%
+        dplyr::rename(!!!games_labels) %>%
+        dplyr::relocate(` ` = image) %>%
+        DT::datatable(options = list(paging = FALSE), escape = FALSE,
+                      rownames = FALSE)
     })
 
     random_game <- eventReactive(input$rand, {
