@@ -10,8 +10,9 @@ game_chooser(...)
 \item{...}{options passed to \code{\link[shiny:shinyApp]{shiny::shinyApp()}}}
 }
 \description{
-This app uses a board game collection (as downloaded from
-\href{https://boardgamegeek.com}{boardgamegeek.com} to help a user choose a game to play based on the
-number of players, the time available, and/or the age of the youngest
-player. There's also a random game selector if you're really indecisive!
+This app uses a board game collection (as accessed from
+\href{https://boardgamegeek.com}{boardgamegeek.com}) to help a user choose a game
+to play based on the number of players, the time available, and/or the age
+of the youngest player. There's also a random game selector if you're
+really indecisive!
 }

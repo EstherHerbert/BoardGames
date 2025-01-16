@@ -1,7 +1,7 @@
 #' Shiny app to help choose a game to play
 #'
 #' This app uses a board game collection (as accessed from
-#'   [boardgamegeek.com](https://boardgamegeek.com) to help a user choose a game
+#'   [boardgamegeek.com](https://boardgamegeek.com)) to help a user choose a game
 #'   to play based on the number of players, the time available, and/or the age
 #'   of the youngest player. There's also a random game selector if you're
 #'   really indecisive!
@@ -122,7 +122,7 @@ game_chooser <- function(...) {
 
     output$random_game_details <- renderText({
       df <- dplyr::select(random_game(), minplayers:minage, -image) %>%
-        dplyr::rename(any_of(games_labels))
+        dplyr::rename(dplyr::any_of(games_labels))
 
       paste0(names(df), ": ", df[1,], collapse = "; ")
     })
