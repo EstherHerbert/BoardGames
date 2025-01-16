@@ -20,9 +20,9 @@ game_chooser <- function(...) {
     sidebarLayout(
       sidebarPanel(
         fluidRow(
-          column(width = 9, textInput("username", "Your BGG username")),
-          column(width = 3, div(style = "margin-top: 25px",
-                                actionButton("search", "Search")))
+          column(width = 7, textInput("username", "Your BGG username")),
+          column(width = 5, div(style = "margin-top: 25px",
+                                actionButton("search", "Get Collection")))
         ),
         numericInput("players", "Number of Players", min = 1, max = 20,
                      value = 2),
@@ -33,11 +33,13 @@ game_chooser <- function(...) {
         actionButton("rand", "Random Game?", icon = icon("shuffle")),
         span(textOutput("random_game"), style = "font-size:22px"),
         textOutput("random_game_details"),
-        uiOutput("random_game_image")
+        uiOutput("random_game_image"),
+        uiOutput("random_game_description")
       ),
 
       # Show a plot of the generated distribution
       mainPanel(
+        htmlOutput("description_row"),
         DT::dataTableOutput("games_filtered")
       )
     )
@@ -96,9 +98,18 @@ game_chooser <- function(...) {
         image = paste0("<img src=\"", image, "\" height=\"30\">")
       ) %>%
         dplyr::rename(!!!games_labels) %>%
+        dplyr::select(-Type, -description) %>%
         dplyr::relocate(` ` = image) %>%
         DT::datatable(options = list(paging = FALSE), escape = FALSE,
-                      rownames = FALSE)
+                      rownames = FALSE, selection = 'single')
+    })
+
+    output$description_row <- renderUI({
+      stringr::str_replace_all(
+        games_filtered()[input$games_filtered_rows_selected,]$description,
+        "&#10;", "<br>"
+      ) %>%
+        HTML()
     })
 
     random_game <- eventReactive(input$rand, {
@@ -114,6 +125,11 @@ game_chooser <- function(...) {
         dplyr::rename(any_of(games_labels))
 
       paste0(names(df), ": ", df[1,], collapse = "; ")
+    })
+
+    output$random_game_description <- renderUI({
+      stringr::str_replace_all(random_game()$description, "&#10;", "<br>") %>%
+        HTML()
     })
 
     output$random_game_image <- renderUI({
