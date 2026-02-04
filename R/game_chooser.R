@@ -11,42 +11,32 @@
 #' @export
 game_chooser <- function(...) {
 
-  ui <- fluidPage(
-
-    # Application title
-    titlePanel("Game Chooser"),
-
-    # Sidebar with a slider input for number of bins
-    sidebarLayout(
-      sidebarPanel(
-        fluidRow(
-          column(width = 7, textInput("username", "Your BGG username")),
-          column(width = 5, div(style = "margin-top: 25px",
-                                actionButton("search", "Get Collection")))
-        ),
-        numericInput("players", "Number of Players", min = 1, max = 20,
-                     value = 2),
-        shiny::checkboxInput("time", label = "Is time limited?"),
-        uiOutput("timeInput"),
-        checkboxInput("young", label = "Are there young players?"),
-        uiOutput("ageInput"),
-        actionButton("rand", "Random Game?", icon = icon("shuffle")),
-        span(textOutput("random_game"), style = "font-size:22px"),
-        textOutput("random_game_details"),
-        uiOutput("random_game_image"),
-        uiOutput("random_game_description")
-      ),
-
-      # Show a plot of the generated distribution
-      mainPanel(
-        htmlOutput("description_row"),
-        DT::dataTableOutput("games_filtered")
-      )
-    )
+  ui <- bslib::page_sidebar(
+    title = "Game Chooser",
+    sidebar = bslib::sidebar(
+      textInput("username", "Your BGG username"),
+      actionButton("search", "Get Collection"),
+      numericInput("players", "Number of Players", min = 1, max = 20,
+                   value = 2),
+      checkboxInput("time", label = "Is time limited?"),
+      uiOutput("timeInput"),
+      checkboxInput("young", label = "Are there young players?"),
+      uiOutput("ageInput"),
+      actionButton("rand", "Random Game?", icon = icon("shuffle")),
+      span(textOutput("random_game"), style = "font-size:22px"),
+      textOutput("random_game_details"),
+      uiOutput("random_game_image"),
+      uiOutput("random_game_description"),
+      width = 400,
+      open = 'always'
+    ),
+    DT::dataTableOutput("games_filtered")
   )
 
   # Define server logic required to draw a histogram
   server <- function(input, output, session) {
+
+    # bslib::bs_themer()
 
     games <- eventReactive(input$search, {
 
@@ -104,13 +94,24 @@ game_chooser <- function(...) {
                       rownames = FALSE, selection = 'single')
     })
 
-    output$description_row <- renderUI({
+    description_row <- reactive({
+      req(input$games_filtered_rows_selected)
       stringr::str_replace_all(
-        games_filtered()[input$games_filtered_rows_selected,]$description,
-        "&#10;", "<br>"
-      ) %>%
-        HTML()
+        games_filtered()[input$games_filtered_rows_selected,]$description
     })
+
+    observe({
+      req(input$games_filtered_rows_selected)
+      showModal(
+        modalDialog(
+          description_row(),
+          title = 'Description',
+          easyClose = TRUE,
+          size = 'l'
+        )
+      )
+    })
+    shiny::modalDialog()
 
     random_game <- eventReactive(input$rand, {
       dplyr::slice_sample(games_filtered(), n = 1)
@@ -136,9 +137,12 @@ game_chooser <- function(...) {
       tags$img(src = random_game()$image, width = 300)
     })
 
+    session$onSessionEnded(stopApp)
+
   }
 
   # Run the application
-  shinyApp(ui = ui, server = server, ...)
+  shinyApp(ui = ui, server = server,
+           options = list(launch.browser = TRUE, display.mode = 'normal'), ...)
 
 }
