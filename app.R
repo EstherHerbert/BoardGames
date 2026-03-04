@@ -1,3 +1,7 @@
+games_labels <- c(Game = "name", `Min Players` = "minplayers",
+                  `Max Players` = "maxplayers", `Max Play Time` = "maxplaytime",
+                  `Min Play Time` = "minplaytime", `Minimum Age` = "minage",
+                  Type = "type", Categories = "category")
 ui <- bslib::page_sidebar(
   title = "Game Chooser",
   sidebar = bslib::sidebar(
