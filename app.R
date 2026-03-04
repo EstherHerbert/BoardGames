@@ -18,11 +18,13 @@ ui <- bslib::page_sidebar(
     span(textOutput("random_game"), style = "font-size:22px"),
     textOutput("random_game_details"),
     uiOutput("random_game_image"),
-    img(src = "BGGLogo.PNG", width = 200),
     width = 400,
     open = 'always'
   ),
-  DT::dataTableOutput("games_filtered")
+  DT::dataTableOutput("games_filtered"),
+  a(href = "https://boardgamegeek.com",
+    target = "_blank",
+    img(src = "BGGLogo.png", width = 200, style = "float:right"))
 )
 
 # Define server logic required to draw a histogram
