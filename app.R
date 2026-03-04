@@ -95,10 +95,10 @@ server <- function(input, output, session) {
     dplyr::mutate(
       games_filtered(),
       image = paste0("<img src=\"", image, "\" height=\"30\">")
-    ) %>%
-      dplyr::rename(!!!games_labels) %>%
-      dplyr::select(-Type, -description) %>%
-      dplyr::relocate(` ` = image) %>%
+    ) |>
+      dplyr::rename(!!!games_labels) |>
+      dplyr::select(-Type, -description) |>
+      dplyr::relocate(` ` = image) |>
       DT::datatable(options = list(paging = FALSE), escape = FALSE,
                     rownames = FALSE, selection = 'single')
   })
@@ -108,7 +108,7 @@ server <- function(input, output, session) {
     stringr::str_replace_all(
       games_filtered()[input$games_filtered_rows_selected,]$description,
       "\n", "<br>"
-    ) %>%
+    ) |>
       HTML()
   })
 
@@ -132,14 +132,14 @@ server <- function(input, output, session) {
   })
 
   output$random_game_details <- renderText({
-    df <- dplyr::select(random_game(), minplayers:minage, -image) %>%
+    df <- dplyr::select(random_game(), minplayers:minage, -image) |>
       dplyr::rename(dplyr::any_of(games_labels))
 
     paste0(names(df), ": ", df[1,], collapse = "; ")
   })
 
   output$random_game_description <- renderUI({
-    stringr::str_replace_all(random_game()$description, "&#10;", "<br>") %>%
+    stringr::str_replace_all(random_game()$description, "&#10;", "<br>") |>
       HTML()
   })
 
