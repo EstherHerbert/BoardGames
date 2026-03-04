@@ -5,3 +5,4 @@
 .DS_Store
 rsconnect/
 BoardGames.Rproj
+R/token.R
